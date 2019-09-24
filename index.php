@@ -11,11 +11,18 @@ require_once('view/LayoutView.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
+//session_destroy();
+session_start();
+
 //CREATE OBJECTS OF THE VIEWS
 $v = new LoginView();
 $dtv = new DateTimeView();
 $lv = new LayoutView();
 
 
-$lv->render(isset($_SESSION['username']), $v, $dtv);
+    //$_SESSION['username'] = $_POST['LoginView::UserName'];
+//echo $v->isLoggedIn();
+
+$lv->render($v, $dtv, $v->setLogin(),);
+//echo $_SESSION['username'];
 

@@ -8,7 +8,9 @@ class LoginView {
 	private static $cookieName = 'LoginView::CookieName';
 	private static $cookiePassword = 'LoginView::CookiePassword';
 	private static $keep = 'LoginView::KeepMeLoggedIn';
-	private static $messageId = 'LoginView::Message';
+  private static $messageId = 'LoginView::Message';
+  private $message = '';
+  private $isNotLoggedIn = true;
 
 	
 
@@ -20,32 +22,60 @@ class LoginView {
 	 * @return  void BUT writes to standard output and cookies!
 	 */
 	public function response() {
-      $message = '';
-    
+  
+    $response = '';
 
-      if(isset($_POST[LoginView::$login])) {
-        if(strlen($this->getRequestUserName()) < 1) {
-         
-          //$_SESSION['username'] = $this->getRequestUserName();
-          $message = 'Username is missing';
-        } else if(strlen($this->getRequestUserPassword()) < 1) {
-          $message = 'Password is missing';
-        } else {
-          $_SESSION['username'] = $this->getRequestUserName();
+    if(!$this->setLogin()) {
+      session_destroy();
+      $response = $this->generateLoginFormHTML($this->message);
+    } else {
+      $response .= $this->generateLogoutButtonHTML($this->message);
+    }
+
+		
+		return $response;
+  }
+  
+
+  public function setLogin() {
+    if (isset($_POST[LoginView::$logout])) {
+      //echo 'trying to destroy';
+     
+      return false;
+    }
+    if (isset($_POST[LoginView::$login])) {
+
+      if (strlen($this->getRequestUserName()) < 1) {
+       
+        //$_SESSION['username'] = $this->getRequestUserName();
+        $this->message = 'Username is missing';
+      } else if (strlen($this->getRequestUserPassword()) < 1) {
+        $this->message = 'Password is missing';
+      } else {
+        if(!isset($_SESSION['username'])) {
+          //session_start();
+          $this->isNotLoggedIn = false;
+          //echo 'session started!???';
+          $this->message = 'Welcome';
+          $_SESSION['username'] = $_POST['LoginView::UserName']; // $this->getRequestUserName();
+          //echo $_SESSION['username'];
         }
+        return true;
       }
       
-       
-    
-
-    if(isset($_SESSION['username'])) {
-
+    } else if(!isset($_SESSION['username'])) {
+      //echo 'session not started...';
+        return false;
+    } else if(isset($_SESSION['username'])) {
+      //echo 'session started...';
+   
+      return true;
     }
-	
-		$response = $this->generateLoginFormHTML($message);
-		//$response .= $this->generateLogoutButtonHTML($message);
-		return $response;
-	}
+
+    
+    
+   
+  }
 
 	/**
 	* Generate HTML code on the output buffer for the logout button
@@ -67,10 +97,6 @@ class LoginView {
 	* @return  void, BUT writes to standard output!
 	*/
 	private function generateLoginFormHTML($message) {
-		
-		if($this->isLoggedIn()) {
-			return $this->generateLogoutButtonHTML("Welcome");
-		} else {
         
         return '
 			<form method="post" > 
@@ -91,7 +117,7 @@ class LoginView {
 				</fieldset>
 			</form>
 		';
-		}
+	
 		
 	}
 
