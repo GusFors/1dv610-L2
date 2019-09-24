@@ -17,5 +17,5 @@ $dtv = new DateTimeView();
 $lv = new LayoutView();
 
 
-$lv->render(false, $v, $dtv);
+$lv->render(isset($_SESSION['username']), $v, $dtv);
 

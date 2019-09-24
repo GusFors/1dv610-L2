@@ -4,6 +4,7 @@
 class LayoutView {
   
   public function render($isLoggedIn, LoginView $v, DateTimeView $dtv) {
+    
     echo '<!DOCTYPE html>
       <html>
         <head>

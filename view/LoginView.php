@@ -20,8 +20,28 @@ class LoginView {
 	 * @return  void BUT writes to standard output and cookies!
 	 */
 	public function response() {
-		$message = '';
-		
+      $message = '';
+    
+
+      if(isset($_POST[LoginView::$login])) {
+        if(strlen($this->getRequestUserName()) < 1) {
+         
+          //$_SESSION['username'] = $this->getRequestUserName();
+          $message = 'Username is missing';
+        } else if(strlen($this->getRequestUserPassword()) < 1) {
+          $message = 'Password is missing';
+        } else {
+          $_SESSION['username'] = $this->getRequestUserName();
+        }
+      }
+      
+       
+    
+
+    if(isset($_SESSION['username'])) {
+
+    }
+	
 		$response = $this->generateLoginFormHTML($message);
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
@@ -47,7 +67,12 @@ class LoginView {
 	* @return  void, BUT writes to standard output!
 	*/
 	private function generateLoginFormHTML($message) {
-		return '
+		
+		if($this->isLoggedIn()) {
+			return $this->generateLogoutButtonHTML("Welcome");
+		} else {
+        
+        return '
 			<form method="post" > 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
@@ -66,11 +91,33 @@ class LoginView {
 				</fieldset>
 			</form>
 		';
+		}
+		
 	}
-	
+
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
 	private function getRequestUserName() {
+		if (isset($_POST['LoginView::UserName'])) {
+			return $_POST['LoginView::UserName'];
+    }
+    return null;
 		//RETURN REQUEST VARIABLE: USERNAME
+  }
+  
+  private function getRequestUserPassword() {
+		if (isset($_POST['LoginView::Password'])) {
+			return $_POST['LoginView::Password'];
+    }
+    return null;
+		//RETURN REQUEST VARIABLE: USERNAME
+	}
+
+	public function isLoggedIn() {
+		if (isset($_SESSION['username'])) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }
