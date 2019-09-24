@@ -2,34 +2,34 @@
 
 class DateTimeView {
 
-	private $dateObj = "getDateObj();";
 
 	public function getWeekDay() {
-		return date("l");
+		return date('l');
 	}
 
 	public function getDateDay() {
-		return date("d");
+		return date('d');
 	}
 
 	public function getMonth() {
-		return date("F");
+		return date('F');
 	}
 
 	public function getYear() {
-		return date("Y");
+		return date('Y');
 	}
 
 	public function getHour() {
-		return date("G");
+		date_default_timezone_set('Europe/Stockholm');
+		return date('G');
 	}
 
 	public function getMinute() {
-		return date("i");
+		return date('i');
 	}
 
 	public function getSecond() {
-		return date("s");
+		return date('s');
 	}
 
 	public function show() {
