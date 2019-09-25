@@ -14,7 +14,7 @@ ini_set('display_errors', 'On');
 
 //session_destroy();
 session_start();
-setcookie("TestCookie", 'hfd', time()+3600);
+
 //CREATE OBJECTS OF THE VIEWS
 $v = new LoginView();
 $dtv = new DateTimeView();
