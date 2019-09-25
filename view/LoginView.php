@@ -69,7 +69,7 @@ class LoginView {
       echo 'failed dbconn'; 
     }
 
-    $sql = "SELECT id FROM users WHERE username = '$username' AND password = '$password'";
+    $sql = "SELECT id FROM users WHERE BINARY username = '$username' AND BINARY password = '$password'";
    
     $result = mysqli_query($conn,$sql);
     if(empty($result)) {
