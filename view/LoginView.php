@@ -85,8 +85,8 @@ class LoginView {
       $result = mysqli_query($conn,$sql);
     }
     $row = mysqli_fetch_array($result, 1);
-    $sql = "DROP TABLE users";
-    $result = mysqli_query($conn,$sql);
+    //$sql = "DROP TABLE users";
+    //$result = mysqli_query($conn,$sql);
     $count = mysqli_num_rows($result);
     
  
