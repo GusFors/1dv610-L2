@@ -124,7 +124,7 @@ class LoginView {
           //echo 'session started!???';
           $this->message = 'Welcome';
           $_SESSION['username'] = $_POST['LoginView::UserName']; // $this->getRequestUserName();
-          header('Location: index.php');
+          //header('Location: index.php');
           return true;
         } else {
           $this->message = 'Wrong name or password';
