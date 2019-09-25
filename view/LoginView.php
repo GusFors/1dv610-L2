@@ -46,7 +46,7 @@ class LoginView {
     $dbpassword = $url["pass"];
     $db = substr($url["path"], 1);
 
-    $conn = mysqli_connect($server, $username, $password, $db);
+    $conn = mysqli_connect($server, $dbusername, $dbpassword, $db);
 
     /*
     $localServer = 'localhost';
