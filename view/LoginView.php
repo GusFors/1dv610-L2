@@ -83,11 +83,11 @@ class LoginView {
  
   
     if ($count == 1) {
-       echo 'correct login?';
+       //echo 'correct login?';
        return true;
        
     } else {
-       echo 'no user or wrong pass';
+       //echo 'no user or wrong pass';
        return false;
     }
    
