@@ -20,7 +20,7 @@ class DateTimeView {
 	}
 
 	public function getHour() {
-		date_default_timezone_set('Europe/Stockholm');
+		//date_default_timezone_set('Europe/Stockholm');
 		return date('G');
 	}
 
