@@ -22,7 +22,7 @@ $lv = new LayoutView();
 
 
     //$_SESSION['username'] = $_POST['LoginView::UserName'];
-echo $v->isLoggedIn() ? 'true' : 'false';
+//echo $v->isLoggedIn() ? 'true' : 'false';
 
 $lv->render($v, $dtv, $v->checkLoginStatus());
 //echo $_SESSION['username'];

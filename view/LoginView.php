@@ -46,22 +46,35 @@ class LoginView {
     $dbpassword = $url["pass"];
     $db = substr($url["path"], 1);
 
-    $conn = mysqli_connect($server, $dbusername, $dbpassword, $db);
+    $conn = mysqli_connect($server, $dbusername, $dbpassword, $db); 
 
     /*
     $localServer = 'localhost';
     $dbUsername = 'root';
     $dbPass = '';
     $dbName = 'phplogin';
-    $conn = mysqli_connect($localServer, $dbUsername, $dbPass, $dbName);
-    */
+    $conn = mysqli_connect($localServer, $dbUsername, $dbPass, $dbName); */
+    
     if (!$conn) {
       die('failed db connection'.mysqli_connect_error());
       echo 'failed dbconn'; 
     }
 
-    $sql = "SELECT id FROM user WHERE username = '$username' AND password = '$password'";
+    $sql = "SELECT id FROM users WHERE username = '$username' AND password = '$password'";
+   
     $result = mysqli_query($conn,$sql);
+    if(empty($result)) {
+      //echo 'no such table';
+      $sql = "CREATE TABLE users (
+        id int(10) AUTO_INCREMENT,
+        username varchar(20) NOT NULL,
+        password varchar(20) NOT NULL,
+        PRIMARY KEY  (id)
+        )";
+        $result = mysqli_query($conn,$sql);
+      $sql = "INSERT INTO users (username, password) VALUES ('admin', 'notsecret')";
+      $result = mysqli_query($conn,$sql);
+    }
     $row = mysqli_fetch_array($result, 1);
   
     
