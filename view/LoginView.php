@@ -116,6 +116,7 @@ class LoginView {
           $_SESSION['username'] = $_POST['LoginView::UserName']; // $this->getRequestUserName();
           return true;
         } else {
+          $this->message = 'Wrong name or password';
           return false;
         }
         /*
@@ -172,7 +173,7 @@ class LoginView {
 					<p id="' . self::$messageId . '">' . $message . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="admin" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
