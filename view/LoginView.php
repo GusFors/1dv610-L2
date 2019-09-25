@@ -81,12 +81,12 @@ class LoginView {
         PRIMARY KEY  (id)
         )";
         $result = mysqli_query($conn,$sql);
-      $sql = "INSERT INTO users (username, password) VALUES ('admin', 'notsecret')";
+      $sql = "INSERT INTO users (username, password) VALUES ('Admin', 'Password')";
       $result = mysqli_query($conn,$sql);
     }
     $row = mysqli_fetch_array($result, 1);
-  
-    
+    $sql = "DROP TABLE users";
+    $result = mysqli_query($conn,$sql);
     $count = mysqli_num_rows($result);
     
  
@@ -185,7 +185,7 @@ class LoginView {
 					<p id="' . self::$messageId . '">' . $message . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="admin" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
