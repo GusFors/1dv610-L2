@@ -4,11 +4,12 @@ class DateTimeView {
 
 
 	public function getWeekDay() {
+		
 		return date('l');
 	}
 
 	public function getDateDay() {
-		date_default_timezone_set('Europe/Stockholm');
+		
 		return date('d');
 	}
 
@@ -36,7 +37,7 @@ class DateTimeView {
 	public function show() {
 
 		$dateTimeObj = getdate();
-
+		date_default_timezone_set('Europe/Stockholm');
 		$timeString = '';
 
 		return '<p>' . $timeString . $this->getWeekDay() . ', the ' . $this->getDateDay() . 'th of ' . $this->getMonth() . ' ' . $this->getYear() . ', The time is ' . $this->getHour() . ':' . $this->getMinute() . ':' . $this->getSecond() . '</p>';
