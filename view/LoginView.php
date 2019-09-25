@@ -27,6 +27,9 @@ class LoginView {
 
     if (!$this->checkLoginStatus()) {
       session_destroy();
+      $_SESSION = [];
+      
+      //unset($_SESSION["the position"]);
       $response = $this->generateLoginFormHTML($this->message);
     } else {
       //echo $this->getRequestUserName();
@@ -39,21 +42,27 @@ class LoginView {
   
   public function checkDbUserMatch($username, $password) {
     
-    $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+    if(count(parse_url(getenv("CLEARDB_DATABASE_URL"))) > 1) {
+      $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
     
-    $server = $url["host"];
-    $dbusername = $url["user"];
-    $dbpassword = $url["pass"];
-    $db = substr($url["path"], 1);
+      $server = $url["host"];
+      $dbusername = $url["user"];
+      $dbpassword = $url["pass"];
+      $db = substr($url["path"], 1);
 
-    $conn = mysqli_connect($server, $dbusername, $dbpassword, $db); 
-
+      $conn = mysqli_connect($server, $dbusername, $dbpassword, $db);
+    } else {
+      $localServer = 'localhost';
+      $dbUsername = 'root';
+      $dbPass = '';
+      $dbName = 'phplogin';
+      $conn = mysqli_connect($localServer, $dbUsername, $dbPass, $dbName); 
+    }
     /*
-    $localServer = 'localhost';
-    $dbUsername = 'root';
-    $dbPass = '';
-    $dbName = 'phplogin';
-    $conn = mysqli_connect($localServer, $dbUsername, $dbPass, $dbName); */
+     */
+
+    
+    
     
     if (!$conn) {
       die('failed db connection'.mysqli_connect_error());
@@ -110,10 +119,12 @@ class LoginView {
       } else {
         $userMatchResult = $this->checkDbUserMatch($this->getRequestUserName(), $this->getRequestUserPassword());
         if ($userMatchResult) {
+          
           $this->isNotLoggedIn = false;
           //echo 'session started!???';
           $this->message = 'Welcome';
           $_SESSION['username'] = $_POST['LoginView::UserName']; // $this->getRequestUserName();
+          header('Location: index.php');
           return true;
         } else {
           $this->message = 'Wrong name or password';
@@ -133,6 +144,7 @@ class LoginView {
       
     } else if(!isset($_SESSION['username'])) {
       //echo 'session not started...';
+      //session_destroy();
         return false;
     } else if(isset($_SESSION['username'])) {
       //echo 'session started...';
