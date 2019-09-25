@@ -105,7 +105,11 @@ class LoginView {
   public function checkLoginStatus() {
     if (isset($_POST[LoginView::$logout])) {
       //echo 'trying to destroy';
-      $this->message = 'Bye bye!';
+      $_SESSION = [];
+      if(count($_SESSION) < 1) {
+        $this->message = 'Bye bye!';
+      }
+ 
       return false;
     }
     if (isset($_POST[LoginView::$login])) {
@@ -122,7 +126,10 @@ class LoginView {
           
           $this->isNotLoggedIn = false;
           //echo 'session started!???';
-          $this->message = 'Welcome';
+          if(count($_SESSION) > 0) {
+            $this->message = 'Welcome';
+          }
+         
           $_SESSION['username'] = $_POST['LoginView::UserName']; // $this->getRequestUserName();
           //header('Location: index.php');
           return true;
