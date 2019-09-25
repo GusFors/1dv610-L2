@@ -8,6 +8,7 @@ class DateTimeView {
 	}
 
 	public function getDateDay() {
+		date_default_timezone_set('Europe/Stockholm');
 		return date('d');
 	}
 
