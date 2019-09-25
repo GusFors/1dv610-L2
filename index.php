@@ -11,6 +11,7 @@ require_once('view/LayoutView.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
+
 //session_destroy();
 session_start();
 
@@ -21,8 +22,8 @@ $lv = new LayoutView();
 
 
     //$_SESSION['username'] = $_POST['LoginView::UserName'];
-//echo $v->isLoggedIn();
+echo $v->isLoggedIn() ? 'true' : 'false';
 
-$lv->render($v, $dtv, $v->setLogin(),);
+$lv->render($v, $dtv, $v->checkLoginStatus());
 //echo $_SESSION['username'];
 

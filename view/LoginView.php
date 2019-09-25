@@ -25,10 +25,11 @@ class LoginView {
   
     $response = '';
 
-    if(!$this->setLogin()) {
+    if (!$this->checkLoginStatus()) {
       session_destroy();
       $response = $this->generateLoginFormHTML($this->message);
     } else {
+      //echo $this->getRequestUserName();
       $response .= $this->generateLogoutButtonHTML($this->message);
     }
 
@@ -36,8 +37,50 @@ class LoginView {
 		return $response;
   }
   
+  public function checkDbUserMatch($username, $password) {
+    
+    $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+    
+    $server = $url["host"];
+    $dbusername = $url["user"];
+    $dbpassword = $url["pass"];
+    $db = substr($url["path"], 1);
 
-  public function setLogin() {
+    $conn = mysqli_connect($server, $username, $password, $db);
+
+    /*
+    $localServer = 'localhost';
+    $dbUsername = 'root';
+    $dbPass = '';
+    $dbName = 'phplogin';
+    $conn = mysqli_connect($localServer, $dbUsername, $dbPass, $dbName);
+    */
+    if (!$conn) {
+      die('failed db connection'.mysqli_connect_error());
+      echo 'failed dbconn'; 
+    }
+
+    $sql = "SELECT id FROM user WHERE username = '$username' AND password = '$password'";
+    $result = mysqli_query($conn,$sql);
+    $row = mysqli_fetch_array($result, 1);
+  
+    
+    $count = mysqli_num_rows($result);
+    
+ 
+  
+    if ($count == 1) {
+       echo 'correct login?';
+       return true;
+       
+    } else {
+       echo 'no user or wrong pass';
+       return false;
+    }
+   
+  }
+
+  public function checkLoginStatus() {
     if (isset($_POST[LoginView::$logout])) {
       //echo 'trying to destroy';
      
@@ -52,6 +95,17 @@ class LoginView {
       } else if (strlen($this->getRequestUserPassword()) < 1) {
         $this->message = 'Password is missing';
       } else {
+        $userMatchResult = $this->checkDbUserMatch($this->getRequestUserName(), $this->getRequestUserPassword());
+        if ($userMatchResult) {
+          $this->isNotLoggedIn = false;
+          //echo 'session started!???';
+          $this->message = 'Welcome';
+          $_SESSION['username'] = $_POST['LoginView::UserName']; // $this->getRequestUserName();
+          return true;
+        } else {
+          return false;
+        }
+        /*
         if(!isset($_SESSION['username'])) {
           //session_start();
           $this->isNotLoggedIn = false;
@@ -59,8 +113,8 @@ class LoginView {
           $this->message = 'Welcome';
           $_SESSION['username'] = $_POST['LoginView::UserName']; // $this->getRequestUserName();
           //echo $_SESSION['username'];
-        }
-        return true;
+        } */
+       
       }
       
     } else if(!isset($_SESSION['username'])) {
