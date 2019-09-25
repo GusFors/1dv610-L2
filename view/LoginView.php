@@ -105,7 +105,7 @@ class LoginView {
   public function checkLoginStatus() {
     if (isset($_POST[LoginView::$logout])) {
       //echo 'trying to destroy';
-     
+      $this->message = 'Bye bye!';
       return false;
     }
     if (isset($_POST[LoginView::$login])) {
