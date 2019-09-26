@@ -28,7 +28,12 @@ class RegisterView {
                     $this->message .= '<br>';
                 }
                 $this->message .= 'Password has too few characters, at least 6 characters.';
-            }  
+            } else {
+                if($this->getRequestPassword() !== $this->getRequestPasswordRepeat()) {
+                    $this->message .= 'Passwords do not match.';
+                }  
+            }
+            
                 //$_SESSION['username'] = $this->getRequestUserName();
                 
             //echo 'trying to register';
