@@ -2,6 +2,8 @@
 
 class DatabaseHandler {
 
+    private $conn = false;
+
     public function findDbMatch($username, $password) {
         //Heroku db connection
         if(count(parse_url(getenv("CLEARDB_DATABASE_URL"))) > 1) {
@@ -50,9 +52,65 @@ class DatabaseHandler {
           }
     }
 
-    public function registerUser($conn, $username, $password) {
-        $sql = "INSERT INTO users (username, password) VALUES ($username, $password)";
-        $result = mysqli_query($conn, $sql);
+    public function checkUsername($username, $password, $passwordRepeat) {
+        //Heroku db connection
+        if(count(parse_url(getenv("CLEARDB_DATABASE_URL"))) > 1) {
+            $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+          
+            $server = $url["host"];
+            $dbusername = $url["user"];
+            $dbpassword = $url["pass"];
+            $db = substr($url["path"], 1);
+            if($this->conn == false) {
+                $this->conn = mysqli_connect($server, $dbusername, $dbpassword, $db);
+            }
+            
+          } else { // local db connection
+            $localServer = 'localhost';
+            $dbUsername = 'root';
+            $dbPass = '';
+            $dbName = 'phplogin';
+            if($this->conn == false) {
+                $this->conn = mysqli_connect($localServer, $dbUsername, $dbPass, $dbName); 
+            }
+            
+          } 
+          
+          if (!$this->conn) {
+            die('failed db connection'.mysqli_connect_error());
+            echo 'failed dbconn'; 
+          }
+      
+          $sql = "SELECT id FROM users WHERE BINARY username = '$username' ";
+         
+          $result = mysqli_query($this->conn,$sql);
+          
+          $count = mysqli_num_rows($result);
+          
+          
+        
+          if ($count == 1) {
+             
+             return 'exists';
+             
+          } else if($count == 0 ) {
+              if($password === $passwordRepeat && strlen($password) > 5 && strlen($username) > 2) {
+                
+                 $this->registerUser($username, $password);
+                 return 'success';
+              } else {
+                  return 'fail';
+              }
+           
+             //return false;
+          }
+    }
+
+    public function registerUser($username, $password) {
+        
+            $sql = "INSERT INTO users (username, password) VALUES ('$username', $password)";
+            $result = mysqli_query($this->conn,$sql);       
+            return $result;
     }
 
     private function createUserTable($conn) {
