@@ -5,10 +5,8 @@ class LayoutView {
   
   private $message = '';
 
-  public function render($viewToRender, DateTimeView $dateView, $isLoggedIn, $isRegister, $loginView) {
-    //if($isRegister === false) {
-     // $viewToRender = $loginView;
-   // }
+  public function render($viewToRender, DateTimeView $dateView, $isLoggedIn, $isRegister = false) {
+    
     echo '<!DOCTYPE html>
       <html>
         <head>

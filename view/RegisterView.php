@@ -18,10 +18,10 @@ class RegisterView {
 
 
     public function tryRegister() {
-        //var_dump($_POST);
+      
         $this->message = '';
-        $retryBool = true;
-        if (isset($_POST['RegisterView::Register'])) {
+   
+        if (isset($_POST[self::$register])) {
             $this->registerBool = true;
             if (strlen($this->getRequestUserName()) < 3) {
                     $this->message .= 'Username has too few characters, at least 3 characters.';                       
@@ -38,9 +38,17 @@ class RegisterView {
                 }  
             }
 
+            if ($this->getRequestUserName() != strip_tags($this->getRequestUserName())) {
+                if($this->message !== '') {
+                    $this->message .= '<br>';
+                }
+               $this->message .= 'Username contains invalid characters.';
+               return false;
+            }
+
             $tryStoreUser = $this->database->checkUsername($this->getRequestUserName(), $this->getRequestPassword(), $this->getRequestPasswordRepeat());
 
-            if($tryStoreUser === 'exists') {
+            if ($tryStoreUser === 'exists') {
                 if($this->message !== '') {
                     $this->message .= '<br>';
                 }
@@ -52,26 +60,24 @@ class RegisterView {
                 $_SESSION['registername'] = $this->getRequestUserName();
                 //return true;
                 
-            } else if($tryStoreUser == 'success') {
+            } else if ($tryStoreUser == 'success') {
+                if ($this->message !== '') {
+                    $this->message .= '<br>';
+                }
                 $this->message = 'Registered new user.';
-                return false; 
+                //return true; TODO: If success redirect in some way to index.php without header
+                //header('Location:index.php');
+    
                
             } else if ($tryStoreUser === 'fail') {
-               // $this->message = 'other thing happened';
+               
             }
             
            
-                //$_SESSION['username'] = $this->getRequestUserName();
-                
-            //echo 'trying to register';
+         
         }
-        return true; 
-        /*
-        if(!$this->registerBool) {
-            return true;
-        } else {
-            return false;
-        } */
+        return false; 
+      
        
     }
 
@@ -90,8 +96,12 @@ class RegisterView {
         return $this->generateRegisterFormHTML($this->message);
     }
 
+    private function stripHTML($string) {
+       return strip_tags($string);
+    }
+
     private function generateRegisterFormHTML($message) {
-        $storedUsername = $this->getRequestUserName();
+        $storedUsername = $this->stripHTML( $this->getRequestUserName());
         return '<form action="?register" method="post" enctype="multipart/form-data">
         <fieldset>
         <legend>Register a new user - Write username and password</legend>

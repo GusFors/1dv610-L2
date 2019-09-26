@@ -30,9 +30,9 @@ $registerView = new RegisterView($database);
     //$_SESSION['username'] = $_POST['LoginView::UserName'];
 //echo $loginView->isLoggedIn() ? 'true' : 'false';
 if (!$registerView->checkRegisterStatus()) {
-    $layoutView->render($loginView, $dateView, $loginView->checkLoginStatus(), false, $loginView);
+    $layoutView->render($loginView, $dateView, $loginView->checkLoginStatus());
 } else {
-    $layoutView->render($registerView, $dateView, $loginView->checkLoginStatus(), $registerView->tryRegister(), $loginView);
+    $layoutView->render($registerView, $dateView, $loginView->checkLoginStatus(), !$registerView->tryRegister());
 }
 
 //echo $_SESSION['username'];
