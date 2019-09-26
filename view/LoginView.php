@@ -26,8 +26,8 @@ class LoginView {
     $response = '';
 
     if (!$this->checkLoginStatus()) {
-      session_destroy();
-      $_SESSION = [];
+      //session_destroy();
+      //$_SESSION = [];
       
       //unset($_SESSION["the position"]);
       $response = $this->generateLoginFormHTML($this->message);
@@ -105,10 +105,11 @@ class LoginView {
   public function checkLoginStatus() {
     if (isset($_POST[LoginView::$logout])) {
       //echo 'trying to destroy';
-      $_SESSION = [];
-      if(count($_SESSION) < 1) {
+      if(isset($_SESSION['username'])) {
         $this->message = 'Bye bye!';
       }
+      $_SESSION = [];
+     
  
       return false;
     }
@@ -126,7 +127,7 @@ class LoginView {
           
           $this->isNotLoggedIn = false;
           //echo 'session started!???';
-          if(count($_SESSION) > 0) {
+          if(!isset($_SESSION['username'])) {
             $this->message = 'Welcome';
           }
          
