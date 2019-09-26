@@ -3,6 +3,8 @@
 
 class LayoutView {
   
+  private $message = '';
+
   public function render($viewToRender, DateTimeView $dateView, $isLoggedIn, $isRegister = false) {
     
     echo '<!DOCTYPE html>

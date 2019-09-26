@@ -1,6 +1,7 @@
 <?php
 
 class LoginView {
+  
 	private static $login = 'LoginView::Login';
 	private static $logout = 'LoginView::Logout';
 	private static $name = 'LoginView::UserName';
@@ -9,8 +10,13 @@ class LoginView {
 	private static $cookiePassword = 'LoginView::CookiePassword';
 	private static $keep = 'LoginView::KeepMeLoggedIn';
   private static $messageId = 'LoginView::Message';
-  private $message = '';
+  public $message = '';
   private $isNotLoggedIn = true;
+  private $database;
+
+  public function __construct($database) {
+    $this->database = $database;
+  }
 
 	
 
@@ -40,65 +46,9 @@ class LoginView {
 		return $response;
   }
   
-  public function checkDbUserMatch($username, $password) {
+  public function checkDbUserMatch(DatabaseHandler $database, $username, $password) {
     
-    if(count(parse_url(getenv("CLEARDB_DATABASE_URL"))) > 1) {
-      $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-    
-      $server = $url["host"];
-      $dbusername = $url["user"];
-      $dbpassword = $url["pass"];
-      $db = substr($url["path"], 1);
-
-      $conn = mysqli_connect($server, $dbusername, $dbpassword, $db);
-    } else {
-      $localServer = 'localhost';
-      $dbUsername = 'root';
-      $dbPass = '';
-      $dbName = 'phplogin';
-      $conn = mysqli_connect($localServer, $dbUsername, $dbPass, $dbName); 
-    }
-    /*
-     */
-
-    
-    
-    
-    if (!$conn) {
-      die('failed db connection'.mysqli_connect_error());
-      echo 'failed dbconn'; 
-    }
-
-    $sql = "SELECT id FROM users WHERE BINARY username = '$username' AND BINARY password = '$password'";
-   
-    $result = mysqli_query($conn,$sql);
-    if(empty($result)) {
-      //echo 'no such table';
-      $sql = "CREATE TABLE users (
-        id int(10) AUTO_INCREMENT,
-        username varchar(20) NOT NULL,
-        password varchar(20) NOT NULL,
-        PRIMARY KEY  (id)
-        )";
-        $result = mysqli_query($conn,$sql);
-      $sql = "INSERT INTO users (username, password) VALUES ('Admin', 'Password')";
-      $result = mysqli_query($conn,$sql);
-    }
-    $row = mysqli_fetch_array($result, 1);
-    //$sql = "DROP TABLE users";
-    //$result = mysqli_query($conn,$sql);
-    $count = mysqli_num_rows($result);
-    
- 
-  
-    if ($count == 1) {
-       //echo 'correct login?';
-       return true;
-       
-    } else {
-       //echo 'no user or wrong pass';
-       return false;
-    }
+    return $database->findDbMatch($username, $password);
    
   }
 
@@ -122,7 +72,7 @@ class LoginView {
       } else if (strlen($this->getRequestUserPassword()) < 1) {
         $this->message = 'Password is missing';
       } else {
-        $userMatchResult = $this->checkDbUserMatch($this->getRequestUserName(), $this->getRequestUserPassword());
+        $userMatchResult = $this->checkDbUserMatch($this->database, $this->getRequestUserName(), $this->getRequestUserPassword());
         if ($userMatchResult) {
           
           $this->isNotLoggedIn = false;
