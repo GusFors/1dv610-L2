@@ -14,26 +14,26 @@ class DatabaseHandler {
             $dbpassword = $url["pass"];
             $db = substr($url["path"], 1);
       
-            $conn = mysqli_connect($server, $dbusername, $dbpassword, $db);
+            $this->conn = mysqli_connect($server, $dbusername, $dbpassword, $db);
           } else { // local db connection
             $localServer = 'localhost';
             $dbUsername = 'root';
             $dbPass = '';
             $dbName = 'phplogin';
-            $conn = mysqli_connect($localServer, $dbUsername, $dbPass, $dbName); 
+            $this->conn = mysqli_connect($localServer, $dbUsername, $dbPass, $dbName); 
           } 
           
-          if (!$conn) {
+          if (!$this->conn) {
             die('failed db connection'.mysqli_connect_error());
             echo 'failed dbconn'; 
           }
       
           $sql = "SELECT id FROM users WHERE BINARY username = '$username' AND BINARY password = '$password'";
          
-          $result = mysqli_query($conn,$sql);
+          $result = mysqli_query($this->conn,$sql);
           if(empty($result)) {
             // for development purposes if there is no table to store users, saves a standard admin user
-            $this->createUserTable($conn);
+            $this->createUserTable($this->conn);
           }
          
           //$sql = "DROP TABLE users";

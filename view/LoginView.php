@@ -31,7 +31,7 @@ class LoginView {
   
     $response = '';
 
-    if (!$this->checkLoginStatus()) {
+    if (!$this->tryLogin()) {
       //session_destroy();
       //$_SESSION = [];
       
@@ -52,22 +52,21 @@ class LoginView {
    
   }
 
-  public function checkLoginStatus() {
-    if (isset($_POST[LoginView::$logout])) {
+  public function tryLogin() {
+    if ($this->getLogoutPost()) {
       //echo 'trying to destroy';
-      if(isset($_SESSION['username'])) {
+      if($this->isLoggedIn()) {
         $this->message = 'Bye bye!';
       }
-      $_SESSION = [];
+     $this->logout();
      
  
       return false;
     }
-    if (isset($_POST[LoginView::$login])) {
+
+    if ($this->getLoginPost()) {
 
       if (strlen($this->getRequestUserName()) < 1) {
-       
-        //$_SESSION['username'] = $this->getRequestUserName();
         $this->message = 'Username is missing';
       } else if (strlen($this->getRequestUserPassword()) < 1) {
         $this->message = 'Password is missing';
@@ -76,37 +75,26 @@ class LoginView {
         if ($userMatchResult) {
           
           $this->isNotLoggedIn = false;
-          //echo 'session started!???';
+         
           if(!isset($_SESSION['username'])) {
             $this->message = 'Welcome';
           }
          
-          $_SESSION['username'] = $_POST['LoginView::UserName']; // $this->getRequestUserName();
+     
+          $this->setLogin($this->getRequestUserName());
           //header('Location: index.php');
           return true;
         } else {
           $this->message = 'Wrong name or password';
           return false;
         }
-        /*
-        if(!isset($_SESSION['username'])) {
-          //session_start();
-          $this->isNotLoggedIn = false;
-          //echo 'session started!???';
-          $this->message = 'Welcome';
-          $_SESSION['username'] = $_POST['LoginView::UserName']; // $this->getRequestUserName();
-          //echo $_SESSION['username'];
-        } */
+        
        
       }
       
-    } else if(!isset($_SESSION['username'])) {
-      //echo 'session not started...';
-      //session_destroy();
+    } else if(!$this->isLoggedIn()) {
         return false;
-    } else if(isset($_SESSION['username'])) {
-      //echo 'session started...';
-   
+    } else if($this->isLoggedIn()) {
       return true;
     }
 
@@ -173,7 +161,7 @@ class LoginView {
 			return $_POST['LoginView::Password'];
     }
     return null;
-		//RETURN REQUEST VARIABLE: USERNAME
+		
 	}
 
 	public function isLoggedIn() {
@@ -182,6 +170,22 @@ class LoginView {
 		} else {
 			return false;
 		}
-	}
+  }
+  
+  private function setLogin($username) {
+    $_SESSION['username'] = $username;
+  }
+
+  private function logout() {
+    $_SESSION = [];
+  }
+
+  private function getLogoutPost() {
+    return isset($_POST[self::$logout]);
+  }
+
+  private function getLoginPost() {
+    return isset($_POST[self::$login]);
+  }
 	
 }
