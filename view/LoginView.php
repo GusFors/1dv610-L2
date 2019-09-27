@@ -13,9 +13,11 @@ class LoginView {
   public $message = '';
   private $isNotLoggedIn = true;
   private $database;
+  private $register;
 
-  public function __construct($database) {
+  public function __construct($database, $register) {
     $this->database = $database;
+    $this->register = $register;
   }
 
 	
@@ -64,6 +66,11 @@ class LoginView {
       return false;
     }
 
+    /*
+    if($this->checkDbUserMatch($this->database, $_COOKIE[self::$cookieName], password_verify('Password', 'sde')($_COOKIE[self::$cookiePassword]))) { 
+      return true;
+    } */
+
     if ($this->getLoginPost()) {
 
       if (strlen($this->getRequestUserName()) < 1) {
@@ -76,9 +83,17 @@ class LoginView {
           
           $this->isNotLoggedIn = false;
          
-          if(!isset($_SESSION['username'])) {
+          if(!$this->isLoggedIn()) {
             $this->message = 'Welcome';
+            if($this->getKeepLogin()) {
+              $this->message = 'Welcome and you will be remembered';
+             
+                $this->setcookies(); 
+              
+              
+            }
           }
+
          
      
           $this->setLogin($this->getRequestUserName());
@@ -109,6 +124,7 @@ class LoginView {
 	* @return  void, BUT writes to standard output!
 	*/
 	private function generateLogoutButtonHTML($message) {
+
 		return '
 			<form  method="post" >
 				<p id="' . self::$messageId . '">' . $message .'</p>
@@ -123,6 +139,7 @@ class LoginView {
 	* @return  void, BUT writes to standard output!
 	*/
 	private function generateLoginFormHTML($message) {
+ 
         $storedUsername = $this->getRequestUserName();
         return '
 			<form method="post" > 
@@ -178,6 +195,7 @@ class LoginView {
 
   private function logout() {
     $_SESSION = [];
+    $_COOKIE[self::$cookieName] = 'notLogged';
   }
 
   private function getLogoutPost() {
@@ -186,6 +204,15 @@ class LoginView {
 
   private function getLoginPost() {
     return isset($_POST[self::$login]);
+  }
+
+  private function getKeepLogin() {
+    return isset($_POST[self::$keep]);
+  }
+
+  private function setCookies() {
+    setcookie(self::$cookieName, $this->getRequestUserName(), time() + 600, '/' );
+    setcookie(self::$cookiePassword, password_hash($this->getRequestUserPassword(),  PASSWORD_BCRYPT), time() + 600, '/' );
   }
 	
 }

@@ -21,10 +21,11 @@ session_start();
 $database = new DatabaseHandler();
 
 //CREATE OBJECTS OF THE VIEWS
-$loginView = new LoginView($database);
+
 $dateView = new DateTimeView();
 $layoutView = new LayoutView();
 $registerView = new RegisterView($database);
+$loginView = new LoginView($database, $registerView);
 
 
     //$_SESSION['username'] = $_POST['LoginView::UserName'];
