@@ -66,7 +66,7 @@ class RegisterView {
                 }
                 $this->message = 'Registered new user.';
                 //return true; TODO: If success redirect in some way to index.php without header
-                header('Location:index.php');
+                header('Location:https://gusfors-l2.herokuapp.com/index.php');
                 $_SESSION['registrationname'] = $this->getRequestUserName();
             } else if ($tryStoreUser === 'fail') { }
         }
