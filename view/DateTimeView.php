@@ -2,14 +2,11 @@
 
 class DateTimeView {
 
-
 	public function getWeekDay() {
-		
 		return date('l');
 	}
 
 	public function getDateDay() {
-		
 		return date('d');
 	}
 

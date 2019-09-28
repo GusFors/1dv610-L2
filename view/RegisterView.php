@@ -7,10 +7,10 @@ class RegisterView {
     private static $password = 'RegisterView::Password';
     private static $passwordRepeat = 'RegisterView::PasswordRepeat';
     private static $messageId = 'RegisterView::Message';
-    
+
     private $message = '';
     private $database;
-    private $registerBool = false;
+
 
     public function __construct($database) {
         $this->database = $database;
@@ -18,67 +18,59 @@ class RegisterView {
 
 
     public function tryRegister() {
-      
+
         $this->message = '';
-   
-        if (isset($_POST[self::$register])) {
-            $this->registerBool = true;
+
+        if ($this->checkRequestRegister()) {
+
             if (strlen($this->getRequestUserName()) < 3) {
-                    $this->message .= 'Username has too few characters, at least 3 characters.';                       
+                $this->message .= 'Username has too few characters, at least 3 characters.';
             }
 
             if (strlen($this->getRequestPassword()) < 6) {
-                if($this->message !== '') {
+                if ($this->message !== '') {
                     $this->message .= '<br>';
                 }
                 $this->message .= 'Password has too few characters, at least 6 characters.';
             } else {
-                if($this->getRequestPassword() !== $this->getRequestPasswordRepeat()) {
+                if ($this->getRequestPassword() !== $this->getRequestPasswordRepeat()) {
                     $this->message .= 'Passwords do not match.';
-                }  
+                }
             }
 
             if ($this->getRequestUserName() != strip_tags($this->getRequestUserName())) {
-                if($this->message !== '') {
+                if ($this->message !== '') {
                     $this->message .= '<br>';
                 }
-               $this->message .= 'Username contains invalid characters.';
-               return false;
+                $this->message .= 'Username contains invalid characters.';
+                return false;
             }
 
             $tryStoreUser = $this->database->checkUsername($this->getRequestUserName(), $this->getRequestPassword(), $this->getRequestPasswordRepeat());
 
             if ($tryStoreUser === 'exists') {
-                if($this->message !== '') {
+                if ($this->message !== '') {
                     $this->message .= '<br>';
                 }
-              
-                  
+
+
                 $this->message .= 'User exists, pick another username.';
-                    
-                
+
+
                 $_SESSION['registername'] = $this->getRequestUserName();
                 //return true;
-                
+
             } else if ($tryStoreUser == 'success') {
                 if ($this->message !== '') {
                     $this->message .= '<br>';
                 }
                 $this->message = 'Registered new user.';
                 //return true; TODO: If success redirect in some way to index.php without header
-                //header('Location:index.php');
-    
-               
-            } else if ($tryStoreUser === 'fail') {
-               
-            }
-            
-           
-         
+                header('Location:index.php');
+                $_SESSION['registrationname'] = $this->getRequestUserName();
+            } else if ($tryStoreUser === 'fail') { }
         }
-        return false; 
-      
-       
+        return false;
     }
 
     public function checkRegisterStatus() {
@@ -97,11 +89,11 @@ class RegisterView {
     }
 
     private function stripHTML($string) {
-       return strip_tags($string);
+        return strip_tags($string);
     }
 
     private function generateRegisterFormHTML($message) {
-        $storedUsername = $this->stripHTML( $this->getRequestUserName());
+        $storedUsername = $this->stripHTML($this->getRequestUserName());
         return '<form action="?register" method="post" enctype="multipart/form-data">
         <fieldset>
         <legend>Register a new user - Write username and password</legend>
@@ -120,33 +112,41 @@ class RegisterView {
             <br>
         </fieldset>
        </form>';
-	
-	}
+    }
 
-    
+
 
     private function getRequestUserName() {
-		if (isset($_POST['RegisterView::UserName'])) {
-			return $_POST['RegisterView::UserName'];
+
+        if ($this->checkRequestUserName()) {
+            return $_POST[self::$name];
         }
         return null;
-		
     }
 
-   private function getRequestPassword() {
-    if (isset($_POST['RegisterView::Password'])) {
-        return $_POST['RegisterView::Password'];
+    private function checkRequestUserName() {
+        return isset($_POST[self::$name]);
     }
-    return null;
-    
-   }
 
-   private function getRequestPasswordRepeat() {
-    if (isset($_POST['RegisterView::PasswordRepeat'])) {
-        return $_POST['RegisterView::PasswordRepeat'];
+    private function checkRequestPassword() {
+        return isset($_POST[self::$password]);
     }
-    return null;
-    
-   }
-    
+
+    private function getRequestPassword() {
+        if ($this->checkRequestPassword()) {
+            return $_POST[self::$password];
+        }
+        return null;
+    }
+
+    private function getRequestPasswordRepeat() {
+        if (isset($_POST[self::$passwordRepeat])) {
+            return $_POST[self::$passwordRepeat];
+        }
+        return null;
+    }
+
+    private function checkRequestRegister() {
+        return isset($_POST[self::$register]);
+    }
 }

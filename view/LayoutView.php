@@ -2,13 +2,13 @@
 
 
 class LayoutView {
-  
-  private $message = '';
 
-  public function render($viewToRender, DateTimeView $dateView, $isLoggedIn, $isRegister = false) {
-    
-    echo '<!DOCTYPE html>
-      <html>
+    private $message = '';
+
+    public function render($viewToRender, DateTimeView $dateView, $isLoggedIn, $isRegister = false) {
+
+        echo '<!DOCTYPE html>
+      <html lang="en">
         <head>
           <meta charset="utf-8">
           <title>Login Example</title>
@@ -27,33 +27,29 @@ class LayoutView {
          </body>
       </html>
     ';
-  }
-  
-  private function renderIsLoggedIn($isLoggedIn) {
-    if ($isLoggedIn) {
-      return '<h2>Logged in</h2>';
     }
-    else {
-      return '<h2>Not logged in</h2>';
-    }
-    
-  }
 
-  private function renderRegisterTitle($isRegister) {
-    if ($isRegister) {
-      return '<h2>Register new user</h2>';
-    } else {
-      return '';
+    private function renderIsLoggedIn($isLoggedIn) {
+        if ($isLoggedIn) {
+            return '<h2>Logged in</h2>';
+        } else {
+            return '<h2>Not logged in</h2>';
+        }
     }
-  }
 
-  private function renderHomeOrRegisterTag($isRegister, $isLoggedIn) {
-    if ($isRegister) {
-      return '<a href="?">Back to login</a>';
-    } else if (!$isLoggedIn){
-      return '<a href="?register">Register a new user</a>';
+    private function renderRegisterTitle($isRegister) {
+        if ($isRegister) {
+            return '<h2>Register new user</h2>';
+        } else {
+            return '';
+        }
     }
-  }
 
- 
+    private function renderHomeOrRegisterTag($isRegister, $isLoggedIn) {
+        if ($isRegister) {
+            return '<a href="?">Back to login</a>';
+        } else if (!$isLoggedIn) {
+            return '<a href="?register">Register a new user</a>';
+        }
+    }
 }
